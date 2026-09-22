@@ -1,18 +1,41 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme } from 'react-native';
+import { Stack, router } from "expo-router";
+import { Pressable, StyleSheet } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
-
-SplashScreen.preventAutoHideAsync();
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+export default function RootLayout() {
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-    </ThemeProvider>
+    <Stack
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: "#112255",
+        },
+        headerTintColor: "#fff",
+        headerTitleAlign: "left",
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
+      }}
+    >
+      <Stack.Screen name="index" 
+        options={{ 
+          title: "Criminal Intent",
+          unstable_headerRightItems: () => [                              // takes away the background of the pressable button
+              {
+                type: "custom",
+                hidesSharedBackground: true,
+                element: (
+                  <Pressable onPress={() => router.push("/detail-page")}>
+                    <Ionicons name="add" size={28} color="#fff" />
+                  </Pressable>
+                ),
+              },
+            ],
+        }}
+      />
+    </Stack>
   );
 }
+
+const styles = StyleSheet.create({
+
+});
