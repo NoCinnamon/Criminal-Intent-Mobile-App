@@ -1,22 +1,20 @@
-import { Text, View, StyleSheet, Pressable, TextInput } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Checkbox } from 'expo-checkbox';
-import { useState } from 'react';
-import { Stack, router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Checkbox } from "expo-checkbox";
+import { router } from "expo-router";
+import { useState } from "react";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
-
-function formatDate(date:Date) {
-  const week = date.toLocaleDateString("en-US", {weekday: 'short'});
-  const month = date.toLocaleDateString("en-US", {month: 'short'});
+function formatDate(date: Date) {
+  const week = date.toLocaleDateString("en-US", { weekday: "short" });
+  const month = date.toLocaleDateString("en-US", { month: "short" });
   return `${week} ${month} ${date.getDate()} ${date.getFullYear()}`.toLocaleUpperCase();
 }
-
 
 export default function DetailPage() {
   const dateOnButton = formatDate(new Date());
   const [isChecked, setChecked] = useState(false);
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState("");
 
   return (
     <View style={styles.container}>
@@ -24,71 +22,78 @@ export default function DetailPage() {
         <View style={styles.topLeft}>
           <View style={styles.imageBox}></View>
           <Pressable style={styles.cameraButton}>
-            <Ionicons name='camera' size={28} color='#000' />
+            <Ionicons name="camera" size={28} color="#000" />
           </Pressable>
         </View>
 
         <View style={styles.titleArea}>
           <Text style={styles.title}>Title</Text>
-          <TextInput 
-            style={styles.titleInput} 
-            placeholder="Title" 
-            placeholderTextColor="#9A9A9A" 
-            value={title} 
-            onChangeText={setTitle}>
-          </TextInput>    
+          <TextInput
+            style={styles.titleInput}
+            placeholder="Title"
+            placeholderTextColor="#9A9A9A"
+            value={title}
+            onChangeText={setTitle}
+          ></TextInput>
         </View>
       </View>
 
-    
       <Text style={styles.detailsTitle}>Details</Text>
-      <TextInput style={styles.detailInput} placeholder="What happend?" placeholderTextColor="#9A9A9A"></TextInput>
-      
+      <TextInput
+        style={styles.detailInput}
+        placeholder="What happend?"
+        placeholderTextColor="#9A9A9A"
+      ></TextInput>
+
       <Pressable style={styles.button}>
         <Text style={styles.buttonText}>{dateOnButton}</Text>
       </Pressable>
 
       <View style={styles.checkBoxArea}>
-        <Checkbox style={styles.checkBox} value={isChecked} onValueChange={setChecked} />
+        <Checkbox
+          style={styles.checkBox}
+          value={isChecked}
+          onValueChange={setChecked}
+        />
         <Text style={styles.solvedText}>Solved</Text>
       </View>
 
-      <Pressable style={styles.button} onPress={async () => {
-        const storedAct = await AsyncStorage.getItem('criminalAct');
-        let list = [];
-        if(storedAct) {
-          list = JSON.parse(storedAct);
-        }
-        const nextList = [
-          {
-            id: Date.now().toString(),
-            title,
-            date: new Date().toISOString(),
-            solved: isChecked,
-          },
-        ];
-        await AsyncStorage.setItem("criminalAct", JSON.stringify(nextList));
-        router.back();
-        
-      }}>
+      <Pressable
+        style={styles.button}
+        onPress={async () => {
+          const storedAct = await AsyncStorage.getItem("criminalAct");
+          let list = [];
+          if (storedAct) {
+            list = JSON.parse(storedAct);
+          }
+          const nextList = [
+            ...list,                  // 必须有，'...list' copies every item already in list into the new array, then the new crime is added after those copies.
+            {
+              id: Date.now().toString(),
+              title,
+              date: new Date().toISOString(),
+              solved: isChecked,
+            },
+          ];
+          await AsyncStorage.setItem("criminalAct", JSON.stringify(nextList));
+          router.back();
+        }}
+      >
         <Text style={styles.buttonText}>Save</Text>
       </Pressable>
-    
-
     </View>
   );
 }
 
-
 const styles = StyleSheet.create({
-  container:{
-    flex:1,
+  container: {
+    flex: 1,
     padding: 16,
   },
 
   topArea: {
-    flexDirection:'row',
-    width:'100%',
+    flexDirection: "row",
+    width: "100%",
   },
 
   topLeft: {
@@ -116,11 +121,11 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
 
-  title:{
+  title: {
     fontSize: 18,
     marginLeft: 16,
     marginTop: 90,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 
   titleInput: {
@@ -134,10 +139,10 @@ const styles = StyleSheet.create({
   detailsTitle: {
     fontSize: 18,
     marginTop: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 
-  detailInput:{
+  detailInput: {
     marginTop: 8,
     height: 100,
     borderWidth: 1,
@@ -147,7 +152,7 @@ const styles = StyleSheet.create({
     textAlignVertical: "top",
   },
 
-  button:{
+  button: {
     marginTop: 16,
     width: "100%",
     backgroundColor: "#112255",
@@ -161,7 +166,7 @@ const styles = StyleSheet.create({
   },
 
   checkBoxArea: {
-    flexDirection: 'row',
+    flexDirection: "row",
     alignItems: "center",
     marginTop: 16,
   },
@@ -173,5 +178,5 @@ const styles = StyleSheet.create({
   solvedText: {
     fontSize: 16,
     color: "#000",
-  }
+  },
 });
