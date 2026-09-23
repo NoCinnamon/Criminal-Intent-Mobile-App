@@ -1,17 +1,44 @@
 import { Text, View, StyleSheet, FlatList } from "react-native";
-
-const DATA = [
-  { id: '1', title: 'Criminal Activity 4' },
-  { id: '2', title: 'Criminal Activity 2' },
-]
+import { useCallback, useState } from 'react';
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { useFocusEffect } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Index() {
+  type crimAct = {
+    id: string;
+    title: string;
+    date:string;
+    isSolved: boolean;
+  }
+  const [criminalAct, setCriminalAct] = useState<crimAct[]>([]);        // waht.....
+  useFocusEffect(
+    useCallback(() => {
+      AsyncStorage.getItem('criminalAct').then( (storedAct) => {
+        if (storedAct) {
+          setCriminalAct(JSON.parse(storedAct) );
+        }
+      });
+    }, [])
+  );
+
   return (
     
     <View style={styles.container}>
       <FlatList 
-        data={DATA}
-        renderItem={({item}) => <Text style={styles.activity}>{item.title}</Text> }
+        data={criminalAct}
+        renderItem={({item}) => (
+          <View style ={styles.criminalActRow}>
+            <View style={styles.rowText}>
+              <Text style={styles.activity}>{item.title}</Text> 
+              <Text style={styles.date}>{item.date}</Text>
+            </View>
+            {item.solved ? (
+              <MaterialCommunityIcons name="handcuffs" size={28} color="#000" />
+            ): null}
+          </View>
+        )}
+
         keyExtractor={(item) => item.id}>
       </FlatList>
     </View>
@@ -25,8 +52,25 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 
+  criminalActRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+
+  rowText: {
+    flex:1,
+  },
+
   activity: {
     fontWeight: 'bold',
     fontSize: 18,
+    marginTop: 24,
+  },
+
+  date: {
+    fontSize: 18,
+    color:'#000',
   }
 });

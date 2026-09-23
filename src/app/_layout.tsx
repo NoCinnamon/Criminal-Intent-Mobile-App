@@ -7,31 +7,37 @@ export default function RootLayout() {
     <Stack
       screenOptions={{
         headerStyle: {
-          backgroundColor: "#112255",
+          backgroundColor: '#112255',
         },
-        headerTintColor: "#fff",
-        headerTitleAlign: "left",
+        headerTintColor: '#fff',
+        headerTitleAlign: 'left',
         headerTitleStyle: {
           fontWeight: "bold",
         },
       }}
     >
-      <Stack.Screen name="index" 
+      <Stack.Screen name='index'
         options={{ 
-          title: "Criminal Intent",
+          title: 'Criminal Intent',
           unstable_headerRightItems: () => [                              // takes away the background of the pressable button
               {
-                type: "custom",
+                type: 'custom',
                 hidesSharedBackground: true,
                 element: (
-                  <Pressable onPress={() => router.push("/detail-page")}>
-                    <Ionicons name="add" size={28} color="#fff" />
+                  <Pressable onPress={() => router.push('/detail-page')}>
+                    <Ionicons name='add' size={28} color='#fff' />
                   </Pressable>
                 ),
               },
             ],
         }}
       />
+
+      {/* <Stack.Screen name='detail-page'
+        options={{
+          title: "Criminal Intent",
+        }}
+      /> */}
     </Stack>
   );
 }
