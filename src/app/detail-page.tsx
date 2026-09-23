@@ -4,6 +4,7 @@ import { Checkbox } from "expo-checkbox";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 function formatDate(date: Date) {
   const week = date.toLocaleDateString("en-US", { weekday: "short" });
@@ -12,9 +13,15 @@ function formatDate(date: Date) {
 }
 
 export default function DetailPage() {
-  const dateOnButton = formatDate(new Date());
+  // const dateOnButton = formatDate(new Date());     
+  const [date, setDate] = useState( new Date() );
+  const [showPicker, setShowPicker] = useState(false);
   const [isChecked, setChecked] = useState(false);
   const [title, setTitle] = useState("");
+  const toggleDatePicker = () => {
+    setShowPicker(!showPicker);
+  }
+
 
   return (
     <View style={styles.container}>
@@ -45,9 +52,24 @@ export default function DetailPage() {
         placeholderTextColor="#9A9A9A"
       ></TextInput>
 
-      <Pressable style={styles.button}>
-        <Text style={styles.buttonText}>{dateOnButton}</Text>
+      <Pressable style={styles.button} onPress={toggleDatePicker}>
+        <Text style={styles.buttonText}>{formatDate(date)}</Text>
       </Pressable>
+
+      {showPicker && (
+        <DateTimePicker
+          mode='date'
+          value={date}
+          display='spinner'
+          onValueChange={(_event, selectedDate) => {     // _ignore the event
+            setDate(selectedDate);
+            // setShowPicker(false);
+          }}
+          />
+      )}
+      {!showPicker && (
+        <Pressable onPress={toggleDatePicker}></Pressable>
+      )}
 
       <View style={styles.checkBoxArea}>
         <Checkbox

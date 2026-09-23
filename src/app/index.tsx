@@ -9,7 +9,7 @@ export default function Index() {
     id: string;
     title: string;
     date:string;
-    isSolved: boolean;
+    solved: boolean;
   }
   const [criminalAct, setCriminalAct] = useState<crimAct[]>([]);        // waht.....
   useFocusEffect(
