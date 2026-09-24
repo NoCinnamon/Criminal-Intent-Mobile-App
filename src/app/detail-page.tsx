@@ -19,7 +19,6 @@ export default function DetailPage() {
   const [isChecked, setChecked] = useState(false);
   const [title, setTitle] = useState("");
   const [ userImage, setUserImage ]=useState<string | null>(null);
-  
 
 
   const toggleDatePicker = () => {
@@ -40,6 +39,32 @@ export default function DetailPage() {
     };
   };
 
+  const takePhoto = async () => {
+    let getPermission = await ImagePicker.requestCameraPermissionsAsync();
+    if ( !getPermission.granted ) {
+      Alert.alert('Permission to access the camera is required.');
+      return;                                                   // stops the camera from opening when the user says no.
+    };
+
+
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    if (!result.canceled && result.assets) {
+      setUserImage(result.assets[0].uri);
+    }
+  };
+
+  const choosePhoto = () => {
+    Alert.alert("Add a photo", undefined, [
+      { text: "Use camera", onPress: takePhoto },
+      { text: "Choose from library", onPress: pickImage },
+      { text: "Cancel", style: "cancel" },
+    ]);
+  };
+
 
   return (
     <View style={styles.container}>
@@ -50,7 +75,7 @@ export default function DetailPage() {
               <Image source={{uri: userImage}} style={styles.image} /> 
             ): null}
           </View>
-          <Pressable style={styles.cameraButton} onPress={pickImage}>
+          <Pressable style={styles.cameraButton} onPress={choosePhoto}>
             <Ionicons name="camera" size={28} color="#000" />
           </Pressable>
         </View>
