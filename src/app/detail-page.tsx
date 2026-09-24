@@ -38,7 +38,6 @@ export default function DetailPage() {
       setDetails(item.details ?? '');
       setDate(new Date(item.date));
       setChecked(item.solved);
-
     });
   },[id]);
 
@@ -54,6 +53,7 @@ export default function DetailPage() {
       quality: 1,
     });
     if (!result.canceled && result.assets){
+      console.log(result);                                      // assets is the array, and the first item’s uri is the file address
       setUserImage(result.assets[0].uri);
     }else {
       Alert.alert('You did not select any image.')
@@ -66,7 +66,6 @@ export default function DetailPage() {
       Alert.alert('Permission to access the camera is required.');
       return;                                                   // stops the camera from opening when the user says no.
     };
-
 
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
