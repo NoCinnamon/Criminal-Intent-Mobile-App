@@ -1,8 +1,8 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Checkbox } from "expo-checkbox";
-import { router } from "expo-router";
-import { useState } from "react";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View, Image, Alert } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as ImagePicker from 'expo-image-picker';
@@ -18,8 +18,29 @@ export default function DetailPage() {
   const [showPicker, setShowPicker] = useState(false);
   const [isChecked, setChecked] = useState(false);
   const [title, setTitle] = useState("");
+  const [details, setDetails] = useState('');
   const [ userImage, setUserImage ]=useState<string | null>(null);
 
+  const {id} = useLocalSearchParams<{id? : string}> ();
+  useEffect(() => {
+    if (!id){return;};
+
+    AsyncStorage.getItem("criminalAct").then((storedAct) => {
+      if (!storedAct){
+        return;
+      };
+      const list = JSON.parse(storedAct);
+      const item = list.find((crime: {id:string}) => crime.id ===id);
+      if(!item){return;};
+
+      setTitle(item.title);
+      setUserImage(item.userImage);
+      setDetails(item.details ?? '');
+      setDate(new Date(item.date));
+      setChecked(item.solved);
+
+    });
+  },[id]);
 
   const toggleDatePicker = () => {
     setShowPicker(!showPicker);
@@ -97,6 +118,8 @@ export default function DetailPage() {
         style={styles.detailInput}
         placeholder="What happend?"
         placeholderTextColor="#9A9A9A"
+        value={details}
+        onChangeText={setDetails}
       ></TextInput>
 
       <Pressable style={styles.button} onPress={toggleDatePicker}>
@@ -137,8 +160,10 @@ export default function DetailPage() {
           const nextList = [
             ...list,                                                          // 必须有，'...list' copies every item already in list into the new array, then the new crime is added after those copies.
             {
-              id: Date.now().toString(),
+              id: Date.now().toString(),                                      // using current time as a unique number for id, smart yea.
               title,
+              userImage,
+              details,
               date: new Date().toISOString(),
               solved: isChecked,
             },

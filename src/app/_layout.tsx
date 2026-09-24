@@ -36,6 +36,6 @@ export default function RootLayout() {
   );
 }
 
-const styles = StyleSheet.create({
+// const styles = StyleSheet.create({
 
-});
+// });
