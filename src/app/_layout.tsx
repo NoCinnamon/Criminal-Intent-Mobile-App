@@ -32,12 +32,6 @@ export default function RootLayout() {
             ],
         }}
       />
-
-      {/* <Stack.Screen name='detail-page'
-        options={{
-          title: "Criminal Intent",
-        }}
-      /> */}
     </Stack>
   );
 }

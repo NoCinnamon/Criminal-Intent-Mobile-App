@@ -3,8 +3,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Checkbox } from "expo-checkbox";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View, Image, Alert } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import * as ImagePicker from 'expo-image-picker';
 
 function formatDate(date: Date) {
   const week = date.toLocaleDateString("en-US", { weekday: "short" });
@@ -13,22 +14,43 @@ function formatDate(date: Date) {
 }
 
 export default function DetailPage() {
-  // const dateOnButton = formatDate(new Date());     
   const [date, setDate] = useState( new Date() );
   const [showPicker, setShowPicker] = useState(false);
   const [isChecked, setChecked] = useState(false);
   const [title, setTitle] = useState("");
+  const [ userImage, setUserImage ]=useState<string | null>(null);
+  
+
+
   const toggleDatePicker = () => {
     setShowPicker(!showPicker);
-  }
+  };
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images', 'videos'],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    if (!result.canceled && result.assets){
+      setUserImage(result.assets[0].uri);
+    }else {
+      Alert.alert('You did not select any image.')
+    };
+  };
 
 
   return (
     <View style={styles.container}>
       <View style={styles.topArea}>
         <View style={styles.topLeft}>
-          <View style={styles.imageBox}></View>
-          <Pressable style={styles.cameraButton}>
+          <View style={styles.imageBox}>
+            {userImage ? (
+              <Image source={{uri: userImage}} style={styles.image} /> 
+            ): null}
+          </View>
+          <Pressable style={styles.cameraButton} onPress={pickImage}>
             <Ionicons name="camera" size={28} color="#000" />
           </Pressable>
         </View>
@@ -61,9 +83,8 @@ export default function DetailPage() {
           mode='date'
           value={date}
           display='spinner'
-          onValueChange={(_event, selectedDate) => {     // _ignore the event
+          onValueChange={(_event, selectedDate) => {                        // _ignore the event
             setDate(selectedDate);
-            // setShowPicker(false);
           }}
           />
       )}
@@ -83,13 +104,13 @@ export default function DetailPage() {
       <Pressable
         style={styles.button}
         onPress={async () => {
-          const storedAct = await AsyncStorage.getItem("criminalAct");
+          const storedAct = await AsyncStorage.getItem("criminalAct");        //getItem is a method on the AsyncStorage object
           let list = [];
           if (storedAct) {
             list = JSON.parse(storedAct);
           }
           const nextList = [
-            ...list,                  // 必须有，'...list' copies every item already in list into the new array, then the new crime is added after those copies.
+            ...list,                                                          // 必须有，'...list' copies every item already in list into the new array, then the new crime is added after those copies.
             {
               id: Date.now().toString(),
               title,
@@ -136,6 +157,11 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     backgroundColor: "#D3D3D3",
+  },
+
+  image: {
+    width: 120,
+    height: 120,
   },
 
   titleArea: {
