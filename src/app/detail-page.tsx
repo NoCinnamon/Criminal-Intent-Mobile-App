@@ -1,4 +1,3 @@
-import { ScrollView } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -9,11 +8,10 @@ import { useEffect, useState } from "react";
 import {
   Alert,
   Image,
-  Pressable,
-  StyleSheet,
+  Pressable, ScrollView, StyleSheet,
   Text,
   TextInput,
-  View,
+  View
 } from "react-native";
 import { useTheme } from "../theme";
 
@@ -101,13 +99,12 @@ export default function DetailPage() {
   };
 
   return (
-
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <ScrollView
         keyboardShouldPersistTaps="handled"
         automaticallyAdjustKeyboardInsets={true}
-        contentContainerStyle={styles.scrollContent}>
-
+        contentContainerStyle={styles.scrollContent}
+      >
         <View style={styles.topArea}>
           <View style={styles.topLeft}>
             <View style={styles.imageBox}>
@@ -125,18 +122,20 @@ export default function DetailPage() {
             <TextInput
               style={styles.titleInput}
               placeholder="Title"
-              placeholderTextColor="#9A9A9A"
+              placeholderTextColor={theme.buttonText}
               value={title}
               onChangeText={setTitle}
             ></TextInput>
           </View>
         </View>
 
-        <Text style={[styles.detailsTitle, { color: theme.text }]}>Details</Text>
+        <Text style={[styles.detailsTitle, { color: theme.text }]}>
+          Details
+        </Text>
         <TextInput
-          style={styles.detailInput}
+          style={[styles.detailInput, { color: theme.text }]}
           placeholder="What happend?"
-          placeholderTextColor="#9A9A9A"
+          placeholderTextColor={theme.buttonText}
           value={details}
           onChangeText={setDetails}
         ></TextInput>
@@ -170,7 +169,7 @@ export default function DetailPage() {
             onValueChange={setChecked}
             color={theme.button}
           />
-          <Text style={styles.solvedText}>Solved</Text>
+          <Text style={[styles.solvedText, { color:theme.text}]}>Solved</Text>
         </View>
 
         <Pressable
