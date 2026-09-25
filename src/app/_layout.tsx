@@ -1,48 +1,23 @@
 import { Stack, router } from "expo-router";
 import { Pressable, StyleSheet } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import {ThemeProvider, useTheme, themes } from "../theme";
+
 
 export default function RootLayout() {
   return (
-    <Stack
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: '#112255',
-        },
-        headerTintColor: '#fff',
-        headerTitleAlign: 'left',
-        headerTitleStyle: {
-          fontWeight: "bold",
-        },
-
-        unstable_headerRightItems: () => [                              // takes away the background of the pressable button
-          {
-            type: 'custom',
-            hidesSharedBackground: true,
-            element: (
-              <Pressable style={styles.icons} onPress={() => router.push('/setting-page')}>
-                <Ionicons name='settings' size={28} color='#fff' />
-              </Pressable>
-            ),
+    <ThemeProvider>
+      <Stack
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: '#112255',
           },
-        ],
-      }}
-    >
-      <Stack.Screen name='index'
-        options={{ 
-          title: 'Criminal Intent',
-          unstable_headerLeftItems: () => [                              // takes away the background of the pressable button
-            {
-              type: 'custom',
-              hidesSharedBackground: true,
-              element: (
-                <Pressable style={styles.icons} onPress={() => router.push('/detail-page')}>
-                  <Ionicons name='add' size={28} color='#fff' />
-                </Pressable>
-              ),
-            },
-          ],
-          
+          headerTintColor: '#fff',
+          headerTitleAlign: 'left',
+          headerTitleStyle: {
+            fontWeight: "bold",
+          },
+
           unstable_headerRightItems: () => [                              // takes away the background of the pressable button
             {
               type: 'custom',
@@ -54,17 +29,46 @@ export default function RootLayout() {
               ),
             },
           ],
-          
-          
         }}
-      />
-      <Stack.Screen name='setting-page'
-        options={{
-          title:'Settings',
-          unstable_headerRightItems: () => [],                          // empty header-right array, so the gear icon wont show on setting page
-        }}/>
-
-    </Stack>
+      >
+        <Stack.Screen name='index'
+          options={{ 
+            title: 'Criminal Intent',
+            unstable_headerLeftItems: () => [                              // takes away the background of the pressable button
+              {
+                type: 'custom',
+                hidesSharedBackground: true,
+                element: (
+                  <Pressable style={styles.icons} onPress={() => router.push('/detail-page')}>
+                    <Ionicons name='add' size={28} color='#fff' />
+                  </Pressable>
+                ),
+              },
+            ],
+            
+            unstable_headerRightItems: () => [                              // takes away the background of the pressable button
+              {
+                type: 'custom',
+                hidesSharedBackground: true,
+                element: (
+                  <Pressable style={styles.icons} onPress={() => router.push('/setting-page')}>
+                    <Ionicons name='settings' size={28} color='#fff' />
+                  </Pressable>
+                ),
+              },
+            ],
+            
+            
+          }}
+        />
+        <Stack.Screen name='setting-page'
+          options={{
+            title:'Settings',
+            unstable_headerRightItems: () => [],                          // empty header-right array, so the gear icon wont show on setting page
+          }}/>
+          
+      </Stack>
+    </ThemeProvider>
   );
 }
 
