@@ -10,17 +10,17 @@ export const themes = [
 ]
 
 const ThemeContext = createContext({
-    theme: themes[0],
-    setTheme: (theme: (typeof themes)[0]) => {},
-  });
+  theme: themes[0],
+  setTheme: (theme: (typeof themes)[0]) => {},
+});
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
 const [theme, setTheme] = useState(themes[0]);
 
 return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+  <ThemeContext.Provider value={{ theme, setTheme }}>
     {children}
-    </ThemeContext.Provider>
+  </ThemeContext.Provider>
 );
 }
 

@@ -1,57 +1,136 @@
-# Welcome to your Expo app 👋
+# Criminal Intent
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Prerequisites
 
-## Get started
+To run this app locally, you’ll need:
 
-1. Install dependencies
+### 1. Node.js and npm
 
-   ```bash
-   npm install
-   ```
+Node.js includes npm (the package manager).
 
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+- Download: [https://nodejs.org/](https://nodejs.org/) (LTS version recommended)
+Note: for clone repository, check under line 67 'Installateion'.  
+- Check install:
 
 ```bash
-npm run reset-project
+node -v
+npm -v
+
+* For update npm flobally: 
+npm install npm@latest -g
+
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2. Need Git
 
-### Other setup steps
+Needed to clone the repo.
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Download: [https://git-scm.com/](https://git-scm.com/)
+Check install:
 
-## Learn more
+```bash
+`git --version` 
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+### 3. Expo (via this project)
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+You don’t need a global Expo install. After npm install, use:
 
-## Join the community
+```bash
+npx expo start` 
+```
 
-Join our community of developers creating universal apps.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
-# Criminal-Intent-Mobile-App
+
+### 4. A way to open the app (pick one)
+
+- Option A — Phone (easiest)
+
+Install Expo Go from the App Store (iOS) or Google Play (Android)
+Scan the QR code from the terminal after npx expo start
+
+- Option B — iOS Simulator (Mac only)
+
+Install Xcode from the Mac App Store
+Open Device Hub (Xcode 27+) or Simulator and boot an iPhone
+Then press i in the Expo terminal
+
+- Option C — Android Emulator
+
+Install Android Studio
+Set up an emulator, then press a in the Expo terminal
+
+- Option D — Web
+
+Press w in the Expo terminal after starting the project
+
+## Installation
+
+
+
+### 1. Clone the repo
+
+```bash
+git clone git@github.com:NoCinnamon/Criminal-Intent-Mobile-App.git
+```
+
+
+
+### 2. Install project package
+
+```bash
+npm install
+```
+
+Note: you dont need a global Expo install.
+
+### 3. Start the app
+
+```bash
+npx expo start
+```
+
+Then open it with one of the options in Prerequisites section 4 (Expo Go, simulator, emulator, or web).
+
+## Usage
+
+When you see a criminal activity, wether having a picture or not, you can write a report using app, then save it on the board. 
+If solved: With a open handcaf icon, 
+Not solved: No icon present.
+
+## Some External package used:
+
+1. @expo/vector-icons
+2. @react-native-async-storage/async-storage
+3. @react-native-community/datetimepicker
+4. expo-checkbox
+5. expo-image-picker
+6. FlatList( built-in compunent )
+
+
+
+## Multi Color Themes:
+
+In setting-page.tsx, there are 6 theme buttons, when click, the theme will change to the color the buttons says. context concept is used for this part.
+
+Create a themeContext in theme.tsx using createContext.
+
+ThemeProvider holds the current theme in useState and passes the state { theme, setTheme } to every child through ThemeContext.Provider. 
+
+The useTheme() function will return the context value { theme, setTheme } or in setting-page.tsx can just do useContext(ThemeContext).
+
+in Layout.tsx, insite return, wrap everything in `<ThemeProvider>` is needed, because the provider is above every route(every screen), and we do want it to apply to every screen. So, now the context is avaliable for every screen, but they have to call `useTheme()` to apply to apply the changes! `useTheme()`is the connector for all color theme context!
+
+When click a theme color button, it calls the 'setTheme(item)', the item is one of the object of theme in 'theme.tsx' ( Example, the first one is: 
+
+```bash
+{ name: "White", background: "#ffffff", text: "#000000", button: "#112255", buttonText: "#ffffff", isDark: false },
+```
+
+)
+
+Then, this will update the state inside of the `themeProvider`, React re-renders every component under the provider, so the settings screen immediately uses the new colors:
+
+- the page background becomes `theme.background`
+- the title and button labels become `theme.text`
+

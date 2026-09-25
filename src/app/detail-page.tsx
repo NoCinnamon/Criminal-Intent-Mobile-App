@@ -1,11 +1,20 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { Checkbox } from "expo-checkbox";
+import * as ImagePicker from "expo-image-picker";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View, Image, Alert } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import * as ImagePicker from 'expo-image-picker';
+import {
+  Alert,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import { useTheme } from "../theme";
 
 function formatDate(date: Date) {
   const week = date.toLocaleDateString("en-US", { weekday: "short" });
@@ -14,32 +23,37 @@ function formatDate(date: Date) {
 }
 
 export default function DetailPage() {
-  const [date, setDate] = useState( new Date() );
+  const { theme } = useTheme();
+  const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
   const [isChecked, setChecked] = useState(false);
   const [title, setTitle] = useState("");
-  const [details, setDetails] = useState('');
-  const [ userImage, setUserImage ]=useState<string | null>(null);
+  const [details, setDetails] = useState("");
+  const [userImage, setUserImage] = useState<string | null>(null);
 
-  const {id} = useLocalSearchParams<{id? : string}> ();
+  const { id } = useLocalSearchParams<{ id?: string }>();
   useEffect(() => {
-    if (!id){return;};
+    if (!id) {
+      return;
+    }
 
     AsyncStorage.getItem("criminalAct").then((storedAct) => {
-      if (!storedAct){
+      if (!storedAct) {
         return;
-      };
+      }
       const list = JSON.parse(storedAct);
-      const item = list.find((crime: {id:string}) => crime.id ===id);
-      if(!item){return;};
+      const item = list.find((crime: { id: string }) => crime.id === id);
+      if (!item) {
+        return;
+      }
 
       setTitle(item.title);
       setUserImage(item.userImage);
-      setDetails(item.details ?? '');
+      setDetails(item.details ?? "");
       setDate(new Date(item.date));
       setChecked(item.solved);
     });
-  },[id]);
+  }, [id]);
 
   const toggleDatePicker = () => {
     setShowPicker(!showPicker);
@@ -47,25 +61,25 @@ export default function DetailPage() {
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images', 'videos'],
+      mediaTypes: ["images", "videos"],
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-    if (!result.canceled && result.assets){
-      console.log(result);                                      // assets is the array, and the first item’s uri is the file address
+    if (!result.canceled && result.assets) {
+      console.log(result); // assets is the array, and the first item’s uri is the file address
       setUserImage(result.assets[0].uri);
-    }else {
-      Alert.alert('You did not select any image.')
-    };
+    } else {
+      Alert.alert("You did not select any image.");
+    }
   };
 
   const takePhoto = async () => {
     let getPermission = await ImagePicker.requestCameraPermissionsAsync();
-    if ( !getPermission.granted ) {
-      Alert.alert('Permission to access the camera is required.');
-      return;                                                   // stops the camera from opening when the user says no.
-    };
+    if (!getPermission.granted) {
+      Alert.alert("Permission to access the camera is required.");
+      return; // stops the camera from opening when the user says no.
+    }
 
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
@@ -85,23 +99,22 @@ export default function DetailPage() {
     ]);
   };
 
-
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.topArea}>
         <View style={styles.topLeft}>
           <View style={styles.imageBox}>
             {userImage ? (
-              <Image source={{uri: userImage}} style={styles.image} /> 
-            ): null}
+              <Image source={{ uri: userImage }} style={styles.image} />
+            ) : null}
           </View>
           <Pressable style={styles.cameraButton} onPress={choosePhoto}>
-            <Ionicons name="camera" size={28} color="#000" />
+            <Ionicons name="camera" size={28} color={theme.text} />
           </Pressable>
         </View>
 
         <View style={styles.titleArea}>
-          <Text style={styles.title}>Title</Text>
+          <Text style={[styles.title, { color: theme.text }]}>Title</Text>
           <TextInput
             style={styles.titleInput}
             placeholder="Title"
@@ -112,7 +125,7 @@ export default function DetailPage() {
         </View>
       </View>
 
-      <Text style={styles.detailsTitle}>Details</Text>
+      <Text style={[styles.detailsTitle, { color: theme.text }]}>Details</Text>
       <TextInput
         style={styles.detailInput}
         placeholder="What happend?"
@@ -121,45 +134,50 @@ export default function DetailPage() {
         onChangeText={setDetails}
       ></TextInput>
 
-      <Pressable style={styles.button} onPress={toggleDatePicker}>
-        <Text style={styles.buttonText}>{formatDate(date)}</Text>
+      <Pressable
+        style={[styles.button, { backgroundColor: theme.button }]}
+        onPress={toggleDatePicker}
+      >
+        <Text style={[styles.buttonText, { color: theme.buttonText }]}>
+          {formatDate(date)}
+        </Text>
       </Pressable>
 
       {showPicker && (
         <DateTimePicker
-          mode='date'
+          mode="date"
           value={date}
-          display='spinner'
-          onValueChange={(_event, selectedDate) => {                        // _ignore the event
+          display="spinner"
+          onValueChange={(_event, selectedDate) => {
+            // _ignore the event
             setDate(selectedDate);
           }}
-          />
+        />
       )}
-      {!showPicker && (
-        <Pressable onPress={toggleDatePicker}></Pressable>
-      )}
+      {!showPicker && <Pressable onPress={toggleDatePicker}></Pressable>}
 
       <View style={styles.checkBoxArea}>
         <Checkbox
           style={styles.checkBox}
           value={isChecked}
           onValueChange={setChecked}
+          color={theme.button}
         />
         <Text style={styles.solvedText}>Solved</Text>
       </View>
 
       <Pressable
-        style={styles.button}
+        style={[styles.button, { backgroundColor: theme.button }]}
         onPress={async () => {
-          const storedAct = await AsyncStorage.getItem("criminalAct");        //getItem is a method on the AsyncStorage object
+          const storedAct = await AsyncStorage.getItem("criminalAct"); //getItem is a method on the AsyncStorage object
           let list = [];
           if (storedAct) {
             list = JSON.parse(storedAct);
           }
           const nextList = [
-            ...list,                                                          // 必须有，'...list' copies every item already in list into the new array, then the new crime is added after those copies.
+            ...list, // 必须有，'...list' copies every item already in list into the new array, then the new crime is added after those copies.
             {
-              id: Date.now().toString(),                                      // using current time as a unique number for id, smart yea.
+              id: Date.now().toString(), // using current time as a unique number for id, smart yea.
               title,
               userImage,
               details,
@@ -171,7 +189,9 @@ export default function DetailPage() {
           router.back();
         }}
       >
-        <Text style={styles.buttonText}>Save</Text>
+        <Text style={[styles.buttonText, { color: theme.buttonText }]}>
+          Save
+        </Text>
       </Pressable>
     </View>
   );
@@ -274,6 +294,5 @@ const styles = StyleSheet.create({
 
   solvedText: {
     fontSize: 16,
-    color: "#000",
   },
 });

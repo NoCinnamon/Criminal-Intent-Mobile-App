@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { router, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {useTheme } from "../theme";
 
 export default function Index() {
   type crimAct = {
@@ -22,8 +23,9 @@ export default function Index() {
     }, [])
   );
 
+  const { theme } = useTheme();
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <FlatList 
         data={criminalAct}
         renderItem={({item}) => (
@@ -35,12 +37,12 @@ export default function Index() {
                   params: { id: item.id},
                 })
               }>
-                <Text style={styles.activity}>{item.title}</Text> 
-                <Text style={styles.date}>{item.date}</Text>
+                <Text style={[styles.activity, {color: theme.text}]}>{item.title}</Text> 
+                <Text style={[styles.date, { color: theme.text }]}>{item.date}</Text>
               </Pressable>
             </View>
             {item.solved ? (
-              <MaterialCommunityIcons name="handcuffs" size={28} color="#000" />
+              <MaterialCommunityIcons name="handcuffs" size={28} color={theme.text} />
             ): null}
           </View>
         )}
@@ -77,6 +79,5 @@ const styles = StyleSheet.create({
 
   date: {
     fontSize: 18,
-    color:'#000',
   }
 });
