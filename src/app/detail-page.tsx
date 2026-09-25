@@ -1,3 +1,4 @@
+import { ScrollView } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -100,99 +101,106 @@ export default function DetailPage() {
   };
 
   return (
+
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <View style={styles.topArea}>
-        <View style={styles.topLeft}>
-          <View style={styles.imageBox}>
-            {userImage ? (
-              <Image source={{ uri: userImage }} style={styles.image} />
-            ) : null}
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
+        automaticallyAdjustKeyboardInsets={true}
+        contentContainerStyle={styles.scrollContent}>
+
+        <View style={styles.topArea}>
+          <View style={styles.topLeft}>
+            <View style={styles.imageBox}>
+              {userImage ? (
+                <Image source={{ uri: userImage }} style={styles.image} />
+              ) : null}
+            </View>
+            <Pressable style={styles.cameraButton} onPress={choosePhoto}>
+              <Ionicons name="camera" size={28} color={theme.text} />
+            </Pressable>
           </View>
-          <Pressable style={styles.cameraButton} onPress={choosePhoto}>
-            <Ionicons name="camera" size={28} color={theme.text} />
-          </Pressable>
+
+          <View style={styles.titleArea}>
+            <Text style={[styles.title, { color: theme.text }]}>Title</Text>
+            <TextInput
+              style={styles.titleInput}
+              placeholder="Title"
+              placeholderTextColor="#9A9A9A"
+              value={title}
+              onChangeText={setTitle}
+            ></TextInput>
+          </View>
         </View>
 
-        <View style={styles.titleArea}>
-          <Text style={[styles.title, { color: theme.text }]}>Title</Text>
-          <TextInput
-            style={styles.titleInput}
-            placeholder="Title"
-            placeholderTextColor="#9A9A9A"
-            value={title}
-            onChangeText={setTitle}
-          ></TextInput>
+        <Text style={[styles.detailsTitle, { color: theme.text }]}>Details</Text>
+        <TextInput
+          style={styles.detailInput}
+          placeholder="What happend?"
+          placeholderTextColor="#9A9A9A"
+          value={details}
+          onChangeText={setDetails}
+        ></TextInput>
+
+        <Pressable
+          style={[styles.button, { backgroundColor: theme.button }]}
+          onPress={toggleDatePicker}
+        >
+          <Text style={[styles.buttonText, { color: theme.buttonText }]}>
+            {formatDate(date)}
+          </Text>
+        </Pressable>
+
+        {showPicker && (
+          <DateTimePicker
+            mode="date"
+            value={date}
+            display="spinner"
+            onValueChange={(_event, selectedDate) => {
+              // _ignore the event
+              setDate(selectedDate);
+            }}
+          />
+        )}
+        {!showPicker && <Pressable onPress={toggleDatePicker}></Pressable>}
+
+        <View style={styles.checkBoxArea}>
+          <Checkbox
+            style={styles.checkBox}
+            value={isChecked}
+            onValueChange={setChecked}
+            color={theme.button}
+          />
+          <Text style={styles.solvedText}>Solved</Text>
         </View>
-      </View>
 
-      <Text style={[styles.detailsTitle, { color: theme.text }]}>Details</Text>
-      <TextInput
-        style={styles.detailInput}
-        placeholder="What happend?"
-        placeholderTextColor="#9A9A9A"
-        value={details}
-        onChangeText={setDetails}
-      ></TextInput>
-
-      <Pressable
-        style={[styles.button, { backgroundColor: theme.button }]}
-        onPress={toggleDatePicker}
-      >
-        <Text style={[styles.buttonText, { color: theme.buttonText }]}>
-          {formatDate(date)}
-        </Text>
-      </Pressable>
-
-      {showPicker && (
-        <DateTimePicker
-          mode="date"
-          value={date}
-          display="spinner"
-          onValueChange={(_event, selectedDate) => {
-            // _ignore the event
-            setDate(selectedDate);
+        <Pressable
+          style={[styles.button, { backgroundColor: theme.button }]}
+          onPress={async () => {
+            const storedAct = await AsyncStorage.getItem("criminalAct"); //getItem is a method on the AsyncStorage object
+            let list = [];
+            if (storedAct) {
+              list = JSON.parse(storedAct);
+            }
+            const nextList = [
+              ...list, // 必须有，'...list' copies every item already in list into the new array, then the new crime is added after those copies.
+              {
+                id: Date.now().toString(), // using current time as a unique number for id, smart yea.
+                title,
+                userImage,
+                details,
+                date: new Date().toISOString(),
+                solved: isChecked,
+              },
+            ];
+            await AsyncStorage.setItem("criminalAct", JSON.stringify(nextList));
+            router.back();
           }}
-        />
-      )}
-      {!showPicker && <Pressable onPress={toggleDatePicker}></Pressable>}
-
-      <View style={styles.checkBoxArea}>
-        <Checkbox
-          style={styles.checkBox}
-          value={isChecked}
-          onValueChange={setChecked}
-          color={theme.button}
-        />
-        <Text style={styles.solvedText}>Solved</Text>
-      </View>
-
-      <Pressable
-        style={[styles.button, { backgroundColor: theme.button }]}
-        onPress={async () => {
-          const storedAct = await AsyncStorage.getItem("criminalAct"); //getItem is a method on the AsyncStorage object
-          let list = [];
-          if (storedAct) {
-            list = JSON.parse(storedAct);
-          }
-          const nextList = [
-            ...list, // 必须有，'...list' copies every item already in list into the new array, then the new crime is added after those copies.
-            {
-              id: Date.now().toString(), // using current time as a unique number for id, smart yea.
-              title,
-              userImage,
-              details,
-              date: new Date().toISOString(),
-              solved: isChecked,
-            },
-          ];
-          await AsyncStorage.setItem("criminalAct", JSON.stringify(nextList));
-          router.back();
-        }}
-      >
-        <Text style={[styles.buttonText, { color: theme.buttonText }]}>
-          Save
-        </Text>
-      </Pressable>
+        >
+          <Text style={[styles.buttonText, { color: theme.buttonText }]}>
+            Save
+          </Text>
+        </Pressable>
+      </ScrollView>
     </View>
   );
 }
@@ -294,5 +302,10 @@ const styles = StyleSheet.create({
 
   solvedText: {
     fontSize: 16,
+  },
+
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 24,
   },
 });

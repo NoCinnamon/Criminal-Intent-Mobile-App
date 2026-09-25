@@ -113,7 +113,17 @@ Not solved: No icon present.
 
 In setting-page.tsx, there are 6 theme buttons, when click, the theme will change to the color the buttons says. context concept is used for this part.
 
-Create a themeContext in theme.tsx using createContext.
+Create a themeContext in `src/theme.tsx` using createContext. The theme obj example:
+
+```bash
+export const themes = [
+  { name: "White", background: "#ffffff", text: "#000000", button: "#112255", buttonText: "#ffffff", isDark: false },
+  { name: "Black", background: "#000000", text: "#ffffff", button: "#333333", buttonText: "#ffffff", isDark: true },
+  { name: "Purple", background: "#f3e8ff", text: "#3b0764", button: "#6b21a8", buttonText: "#ffffff", isDark: false },
+]
+```
+
+
 
 ThemeProvider holds the current theme in useState and passes the state { theme, setTheme } to every child through ThemeContext.Provider. 
 
@@ -134,3 +144,16 @@ Then, this will update the state inside of the `themeProvider`, React re-renders
 - the page background becomes `theme.background`
 - the title and button labels become `theme.text`
 
+* In _layout.tsx, the RootNaigator function is created to wraps around all the stacks, screens, then put `const {theme} = useTheme();` inside here.
+
+
+```bash
+function RootNavigator(){
+  const {theme} = useTheme();
+  return (
+    <Stack>...</Stack>
+  );
+}
+```
+
+It is necessary, because the `const {theme} = useTheme();` is Javascript, it is not allowed to be put in  `export default function RootLayout() {...}` . It can only be elements.
