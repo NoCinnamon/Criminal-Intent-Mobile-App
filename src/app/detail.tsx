@@ -2,16 +2,19 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Checkbox } from "expo-checkbox";
+import * as Crypto from "expo-crypto";
 import * as ImagePicker from "expo-image-picker";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Alert,
   Image,
-  Pressable, ScrollView, StyleSheet,
+  Pressable,
+  ScrollView,
+  StyleSheet,
   Text,
   TextInput,
-  View
+  View,
 } from "react-native";
 import { useTheme } from "../theme";
 
@@ -21,7 +24,7 @@ function formatDate(date: Date) {
   return `${week} ${month} ${date.getDate()} ${date.getFullYear()}`.toLocaleUpperCase();
 }
 
-export default function DetailPage() {
+export default function Detail() {
   const { theme } = useTheme();
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
@@ -120,9 +123,9 @@ export default function DetailPage() {
           <View style={styles.titleArea}>
             <Text style={[styles.title, { color: theme.text }]}>Title</Text>
             <TextInput
-              style={styles.titleInput}
+              style={[styles.titleInput, { color: theme.text }]}
               placeholder="Title"
-              placeholderTextColor={theme.buttonText}
+              placeholderTextColor={theme.text}
               value={title}
               onChangeText={setTitle}
             ></TextInput>
@@ -135,7 +138,7 @@ export default function DetailPage() {
         <TextInput
           style={[styles.detailInput, { color: theme.text }]}
           placeholder="What happend?"
-          placeholderTextColor={theme.buttonText}
+          placeholderTextColor={theme.text}
           value={details}
           onChangeText={setDetails}
         ></TextInput>
@@ -155,7 +158,6 @@ export default function DetailPage() {
             value={date}
             display="spinner"
             onValueChange={(_event, selectedDate) => {
-              // _ignore the event
               setDate(selectedDate);
             }}
           />
@@ -169,7 +171,7 @@ export default function DetailPage() {
             onValueChange={setChecked}
             color={theme.button}
           />
-          <Text style={[styles.solvedText, { color:theme.text}]}>Solved</Text>
+          <Text style={[styles.solvedText, { color: theme.text }]}>Solved</Text>
         </View>
 
         <Pressable
@@ -183,7 +185,7 @@ export default function DetailPage() {
             const nextList = [
               ...list, // 必须有，'...list' copies every item already in list into the new array, then the new crime is added after those copies.
               {
-                id: Date.now().toString(), // using current time as a unique number for id, smart yea.
+                id: Crypto.randomUUID(),
                 title,
                 userImage,
                 details,
@@ -192,7 +194,7 @@ export default function DetailPage() {
               },
             ];
             await AsyncStorage.setItem("criminalAct", JSON.stringify(nextList));
-            router.back();
+            Alert.alert("Saved")
           }}
         >
           <Text style={[styles.buttonText, { color: theme.buttonText }]}>

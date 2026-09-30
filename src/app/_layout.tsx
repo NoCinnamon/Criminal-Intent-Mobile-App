@@ -32,7 +32,7 @@ function RootNavigator(){
             element: (
               <Pressable
                 style={styles.icons}
-                onPress={() => router.push("/setting-page")}
+                onPress={() => router.push("/setting")}
               >
                 <Ionicons name="settings" size={28} color={theme.buttonText} />
               </Pressable>
@@ -46,14 +46,13 @@ function RootNavigator(){
         options={{
           title: "Criminal Intent",
           unstable_headerLeftItems: () => [
-            // takes away the background of the pressable button
             {
               type: "custom",
               hidesSharedBackground: true,
               element: (
                 <Pressable
                   style={styles.icons}
-                  onPress={() => router.push("/detail-page")}
+                  onPress={() => router.push("/detail")}
                 >
                   <Ionicons name="add" size={28} color={theme.buttonText} />
                 </Pressable>
@@ -62,14 +61,13 @@ function RootNavigator(){
           ],
 
           unstable_headerRightItems: () => [
-            // takes away the background of the pressable button
             {
               type: "custom",
               hidesSharedBackground: true,
               element: (
                 <Pressable
                   style={styles.icons}
-                  onPress={() => router.push("/setting-page")}
+                  onPress={() => router.push("/setting")}
                 >
                   <Ionicons name="settings" size={28} color="#fff" />
                 </Pressable>
@@ -79,9 +77,15 @@ function RootNavigator(){
         }}
       />
       <Stack.Screen
-        name="setting-page"
+        name="detail"
         options={{
-          title: "Settings",
+          title: "Detail",
+      }}
+      />
+      <Stack.Screen
+        name="setting"
+        options={{
+          title: "",
           unstable_headerRightItems: () => [],                           // empty header-right array, so the gear icon wont show on setting page
         }}
       />

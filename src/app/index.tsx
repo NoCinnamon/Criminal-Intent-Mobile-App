@@ -1,56 +1,64 @@
-import { Text, View, StyleSheet, FlatList, Pressable } from "react-native";
-import { useCallback, useState } from 'react';
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { router, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {useTheme } from "../theme";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { useTheme } from "../theme";
 
 export default function Index() {
   type crimAct = {
     id: string;
     title: string;
-    date:string;
+    date: string;
     solved: boolean;
-  }
-  const [criminalAct, setCriminalAct] = useState<crimAct[]>([]);        // waht.....
+  };
+  const [criminalAct, setCriminalAct] = useState<crimAct[]>([]); // waht.....
   useFocusEffect(
     useCallback(() => {
-      AsyncStorage.getItem('criminalAct').then( (storedAct) => {
+      AsyncStorage.getItem("criminalAct").then((storedAct) => {
         if (storedAct) {
-          setCriminalAct(JSON.parse(storedAct) );
+          setCriminalAct(JSON.parse(storedAct));
         }
       });
-    }, [])
+    }, []),
   );
 
   const { theme } = useTheme();
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <FlatList 
+      <FlatList
         data={criminalAct}
-        renderItem={({item}) => (
-          <View style ={styles.criminalActRow}>
-            <View style={styles.rowText}>
-              <Pressable onPress={() => 
-                router.push({
-                  pathname: '/detail-page',
-                  params: { id: item.id},
-                })
-              }>
-                <Text style={[styles.activity, {color: theme.text}]}>{item.title}</Text> 
-                <Text style={[styles.date, { color: theme.text }]}>{item.date}</Text>
+        renderItem={({ item }) => (
+          <View style={styles.criminalAct}>
+            <View style={styles.criminalActText}>
+              <Pressable
+                onPress={() =>
+                  router.push({
+                    pathname: "/detail",
+                    params: { id: item.id },
+                  })
+                }
+              >
+                <Text style={[styles.activity, { color: theme.text }]}>
+                  {item.title}
+                </Text>
+                <Text style={[styles.date, { color: theme.text }]}>
+                  {item.date}
+                </Text>
               </Pressable>
             </View>
             {item.solved ? (
-              <MaterialCommunityIcons name="handcuffs" size={28} color={theme.text} />
-            ): null}
+              <MaterialCommunityIcons
+                name="handcuffs"
+                size={28}
+                color={theme.text}
+              />
+            ) : null}
           </View>
         )}
-
-        keyExtractor={(item) => item.id}>
-      </FlatList>
+        keyExtractor={(item) => item.id}
+      ></FlatList>
     </View>
-
   );
 }
 
@@ -60,24 +68,24 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 
-  criminalActRow: {
+  criminalAct: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
 
-  rowText: {
-    flex:1,
+  criminalActText: {
+    flex: 1,
   },
 
   activity: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 18,
     marginTop: 24,
   },
 
   date: {
     fontSize: 18,
-  }
+  },
 });
