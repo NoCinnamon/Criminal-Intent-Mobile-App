@@ -1,18 +1,12 @@
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
+import CrimeListItem, { CrimeAct } from "../components/CrimeListItem";
 import { useTheme } from "../theme";
 
 export default function Index() {
-  type crimAct = {
-    id: string;
-    title: string;
-    date: string;
-    solved: boolean;
-  };
-  const [criminalAct, setCriminalAct] = useState<crimAct[]>([]); // waht.....
+  const [criminalAct, setCriminalAct] = useState<CrimeAct[]>([]); // waht.....
   useFocusEffect(
     useCallback(() => {
       AsyncStorage.getItem("criminalAct").then((storedAct) => {
@@ -29,32 +23,15 @@ export default function Index() {
       <FlatList
         data={criminalAct}
         renderItem={({ item }) => (
-          <View style={styles.criminalAct}>
-            <View style={styles.criminalActText}>
-              <Pressable
-                onPress={() =>
-                  router.push({
-                    pathname: "/detail",
-                    params: { id: item.id },
-                  })
-                }
-              >
-                <Text style={[styles.activity, { color: theme.text }]}>
-                  {item.title}
-                </Text>
-                <Text style={[styles.date, { color: theme.text }]}>
-                  {item.date}
-                </Text>
-              </Pressable>
-            </View>
-            {item.solved ? (
-              <MaterialCommunityIcons
-                name="handcuffs"
-                size={28}
-                color={theme.text}
-              />
-            ) : null}
-          </View>
+          <CrimeListItem
+            crimeAct={item}
+            onPress={() =>
+              router.push({
+                pathname: "/detail",
+                params: { id: item.id },
+              })
+            }
+          />
         )}
         keyExtractor={(item) => item.id}
       ></FlatList>
@@ -66,26 +43,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-  },
-
-  criminalAct: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-
-  criminalActText: {
-    flex: 1,
-  },
-
-  activity: {
-    fontWeight: "bold",
-    fontSize: 18,
-    marginTop: 24,
-  },
-
-  date: {
-    fontSize: 18,
   },
 });

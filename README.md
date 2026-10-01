@@ -123,8 +123,6 @@ export const themes = [
 ]
 ```
 
-
-
 ThemeProvider holds the current theme in useState and passes the state { theme, setTheme } to every child through ThemeContext.Provider. 
 
 The useTheme() function will return the context value { theme, setTheme } or in setting-page.tsx can just do useContext(ThemeContext).
@@ -144,8 +142,7 @@ Then, this will update the state inside of the `themeProvider`, React re-renders
 - the page background becomes `theme.background`
 - the title and button labels become `theme.text`
 
-* In _layout.tsx, the RootNaigator function is created to wraps around all the stacks, screens, then put `const {theme} = useTheme();` inside here.
-
+- In _layout.tsx, the RootNaigator function is created to wraps around all the stacks, screens, then put `const {theme} = useTheme();` inside here.
 
 ```bash
 function RootNavigator(){

@@ -1,4 +1,6 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export const themes = [
   { name: "White", background: "#ffffff", text: "#000000", button: "#112255", buttonText: "#ffffff", isDark: false },
@@ -14,14 +16,33 @@ const ThemeContext = createContext({
   setTheme: (theme: (typeof themes)[0]) => {},
 });
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-const [theme, setTheme] = useState(themes[0]);
 
-return (
-  <ThemeContext.Provider value={{ theme, setTheme }}>
-    {children}
-  </ThemeContext.Provider>
-);
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [theme, setThemeState] = useState(themes[0]);
+
+  useEffect(() => {
+    async function loadTheme() {
+      const savedName = await AsyncStorage.getItem("selectedTheme");
+      const savedTheme = themes.find(
+        (item) => item.name === savedName,
+      );
+      if (savedTheme) {
+        setThemeState(savedTheme);
+      }
+    }
+    void loadTheme();
+  }, []);
+
+  function setTheme(newTheme: (typeof themes)[0]) {
+    setThemeState(newTheme);
+    void AsyncStorage.setItem("selectedTheme", newTheme.name);
+  }
+
+  return (
+    <ThemeContext.Provider value={{ theme, setTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
 }
 
 export function useTheme() {

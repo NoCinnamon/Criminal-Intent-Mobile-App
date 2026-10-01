@@ -4,7 +4,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Checkbox } from "expo-checkbox";
 import * as Crypto from "expo-crypto";
 import * as ImagePicker from "expo-image-picker";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Alert,
@@ -16,6 +16,8 @@ import {
   TextInput,
   View,
 } from "react-native";
+import Button from "../components/Button";
+import ThemeText from "../components/ThemeText";
 import { useTheme } from "../theme";
 
 function formatDate(date: Date) {
@@ -121,7 +123,7 @@ export default function Detail() {
           </View>
 
           <View style={styles.titleArea}>
-            <Text style={[styles.title, { color: theme.text }]}>Title</Text>
+            <ThemeText text="Title" />
             <TextInput
               style={[styles.titleInput, { color: theme.text }]}
               placeholder="Title"
@@ -132,9 +134,7 @@ export default function Detail() {
           </View>
         </View>
 
-        <Text style={[styles.detailsTitle, { color: theme.text }]}>
-          Details
-        </Text>
+        <ThemeText text="Detail" />
         <TextInput
           style={[styles.detailInput, { color: theme.text }]}
           placeholder="What happend?"
@@ -143,14 +143,10 @@ export default function Detail() {
           onChangeText={setDetails}
         ></TextInput>
 
-        <Pressable
-          style={[styles.button, { backgroundColor: theme.button }]}
+        <Button
+          buttonName={formatDate(date)}
           onPress={toggleDatePicker}
-        >
-          <Text style={[styles.buttonText, { color: theme.buttonText }]}>
-            {formatDate(date)}
-          </Text>
-        </Pressable>
+        ></Button>
 
         {showPicker && (
           <DateTimePicker
@@ -172,10 +168,11 @@ export default function Detail() {
             color={theme.button}
           />
           <Text style={[styles.solvedText, { color: theme.text }]}>Solved</Text>
+
         </View>
 
-        <Pressable
-          style={[styles.button, { backgroundColor: theme.button }]}
+        <Button
+          buttonName="Save"
           onPress={async () => {
             const storedAct = await AsyncStorage.getItem("criminalAct"); //getItem is a method on the AsyncStorage object
             let list = [];
@@ -194,13 +191,9 @@ export default function Detail() {
               },
             ];
             await AsyncStorage.setItem("criminalAct", JSON.stringify(nextList));
-            Alert.alert("Saved")
+            Alert.alert("Saved");
           }}
-        >
-          <Text style={[styles.buttonText, { color: theme.buttonText }]}>
-            Save
-          </Text>
-        </Pressable>
+        ></Button>
       </ScrollView>
     </View>
   );
@@ -247,25 +240,12 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
 
-  title: {
-    fontSize: 18,
-    marginLeft: 16,
-    marginTop: 90,
-    fontWeight: "bold",
-  },
-
   titleInput: {
     fontSize: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#BDBDBD",
     paddingVertical: 4,
     marginLeft: 16,
-  },
-
-  detailsTitle: {
-    fontSize: 18,
-    marginTop: 24,
-    fontWeight: "bold",
   },
 
   detailInput: {
@@ -276,19 +256,6 @@ const styles = StyleSheet.create({
     padding: 8,
     fontSize: 16,
     textAlignVertical: "top",
-  },
-
-  button: {
-    marginTop: 16,
-    width: "100%",
-    backgroundColor: "#112255",
-    paddingVertical: 12,
-    alignItems: "center",
-  },
-
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
   },
 
   checkBoxArea: {
