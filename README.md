@@ -107,7 +107,21 @@ Not solved: No icon present.
 5. expo-image-picker
 6. FlatList( built-in compunent )
 
+## Crime IDs with UUID
 
+Each saved crime is assigned a unique ID using `expo-crypto`:
+
+```ts
+import * as Crypto from "expo-crypto";
+
+const crime = {
+  id: Crypto.randomUUID(),
+  title,
+  details,
+  date,
+  solved: isChecked,
+};
+```
 
 ## Multi Color Themes:
 
